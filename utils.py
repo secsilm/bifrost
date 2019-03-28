@@ -31,23 +31,20 @@ def get_infos():
     pynvml.nvmlInit()
     driver_version = pynvml.nvmlSystemGetDriverVersion().decode()
     device_count = pynvml.nvmlDeviceGetCount()
-    info = []
+    info = {}
     for i in range(device_count):
-        current_device_info = {}
+        info[i] = {}
         handle = pynvml.nvmlDeviceGetHandleByIndex(i)
         mem_info = pynvml.nvmlDeviceGetMemoryInfo(handle)
         try:
             fan_speed = pynvml.nvmlDeviceGetFanSpeed(handle)
         except pynvml.NVMLError_NotSupported as e:
             fan_speed = None
-        current_device_info[i] = Device(
-            free=mem_info.free,
-            used=mem_info.used,
-            total=mem_info.total,
-            temperature=pynvml.nvmlDeviceGetTemperature(handle, 0),
-            fan_speed=fan_speed,
-        )
-        info.append(current_device_info)
+        info[i]['free'] = mem_info.free
+        info[i]['used'] = mem_info.used
+        info[i]['total'] = mem_info.total
+        info[i]['temperature'] = pynvml.nvmlDeviceGetTemperature(handle, 0)
+        info[i]['fan_speed'] = fan_speed
 
     infos["count"] = device_count
     infos["driver_version"] = driver_version
