@@ -7,6 +7,12 @@
 - 使用网页持续查看 GPU 使用情况
 - 可设置时间间隔
 
+## 使用
+
+```bash
+python app.py
+```
+
 ## 实现步骤
 
 初步想法，主要依赖 [pynvml](https://pypi.org/project/nvidia-ml-py3/) 来获取 GPU 信息，使用 flask 或者 dash 显示网页。
