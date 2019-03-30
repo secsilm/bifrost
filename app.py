@@ -35,9 +35,13 @@ def update_graph(n):
     x = list(gpu_infos["info"].keys())
     free = [gpu_infos["info"][item]["free"] / (1024.0 ** 2) for item in x]
     used = [gpu_infos["info"][item]["used"] / (1024.0 ** 2) for item in x]
+    total = [gpu_infos["info"][item]["total"] / (1024.0 ** 2) for item in x]
+    free_ratio = [100*f/t for f, t in zip(free, total)]
     temp = [gpu_infos["info"][item]["temperature"] for item in x]
     speed = [gpu_infos["info"][item]["fan_speed"] for item in x]
-    trace_free = go.Bar(x=x, y=free, name="free")
+    hover_text = [f"free_ratio={f:.2f}" for f in free_ratio]
+    
+    trace_free = go.Bar(x=x, y=free, text=hover_text, name="free")
     trace_used = go.Bar(x=x, y=used, name="used")
     trace_temp = go.Bar(x=x, y=temp, name="temperature")
     trace_speed = go.Bar(x=x, y=speed, name="fan speed")
