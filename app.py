@@ -7,12 +7,27 @@ from utils import get_infos
 from plotly import tools
 import plotly.plotly as py
 import plotly.graph_objs as go
+import socket
 
 app = dash.Dash(__name__)
 
+def get_host_ip():
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(('8.8.8.8', 80))
+        ip = s.getsockname()[0]
+    finally:
+        s.close()
+
+    return ip
+
+ip = get_host_ip()
+
+app.title = f'{ip} Server'
 app.layout = html.Div(
     html.Div(
         [
+            html.H1(children=f"{ip} 的 GPU 使用情况"),
             html.Div(id="live-time-text"),
             dcc.Interval(id="interval-component", interval=3 * 1000, n_intervals=0),
             dcc.Graph(id="gpu-graph"),
