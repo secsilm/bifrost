@@ -14,6 +14,15 @@
 - Python 3.6+
 - dash
 - psutil
+- pandas
+- numpy
+- nvidia-ml-py3
+
+你可以通过下面的命令来安装这些依赖：
+
+```bash
+pip install dash psutil pandas numpy nvidia-ml-py3
+```
 
 ## 使用
 

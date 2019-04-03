@@ -73,7 +73,7 @@ def convert_to_df(info):
         df = pd.DataFrame(processes)
         df["gpu"] = dids
         result.append(df)
-    result = pd.concat(result)
+    result = pd.concat(result, sort=False)
     result = result[table_columns]
     result.create_time = result.create_time.map(timestamp2datetime)
     for c in int_columns:
