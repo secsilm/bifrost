@@ -87,7 +87,7 @@ def get_infos():
                     username=p.username(),
                     num_threads=p.num_threads(),
                     cpu_num=p.cpu_num(),
-                    cpu_percent=p.cpu_percent(),
+                    cpu_percent=p.cpu_percent(interval=1),
                     name=p.name(),
                     cmdline=" ".join(p.cmdline()),
                     used_gpu_mem=used_gpu_mem,

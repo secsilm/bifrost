@@ -79,7 +79,7 @@ def convert_to_df(info):
     for c in int_columns:
         result[c] = result[c].astype(int)
     for c in percent_columns:
-        result[c] = np.round(result[c] * 100, 2)
+        result[c] = np.round(result[c], 2)
     for c in mb_columns:
         result[c] = np.round(result[c] / (1024 ** 2), 2)
     return result
