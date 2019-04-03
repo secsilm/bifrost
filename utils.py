@@ -33,6 +33,7 @@ def get_infos():
     Device = namedtuple(
         "Device",
         [
+            "id",
             "free",
             "used",
             "total",
@@ -85,7 +86,7 @@ def get_infos():
                     cpu_num=p.cpu_percent(),
                     cpu_percent=p.cpu_percent(),
                     name=p.name(),
-                    cmdline=p.cmdline(),
+                    cmdline=" ".join(p.cmdline()),
                     used_gpu_mem=used_gpu_mem,
                     create_time=p.create_time()
                 )
@@ -101,6 +102,7 @@ def get_infos():
         )
         info.append(
             Device(
+                id=i,
                 free=mem_info.free,
                 used=mem_info.used,
                 total=mem_info.total,
