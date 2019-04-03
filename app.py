@@ -93,7 +93,7 @@ app.layout = html.Div(
         [
             html.H1(children=f"{ip} Server GPU Usage"),
             html.Div([html.Span("Update time："), html.Span(id="live-time-text")]),
-            dcc.Interval(id="interval-component", interval=5 * 1000, n_intervals=0),
+            dcc.Interval(id="interval-component", interval=10 * 1000, n_intervals=0),
             html.H2(children="How are the GPUs"),
             dcc.Graph(id="gpu-graph"),
             html.H2(children="Who is using GPUs"),
