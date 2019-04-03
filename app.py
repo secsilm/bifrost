@@ -1,23 +1,46 @@
-import datetime
+import socket
+
+import numpy as np
+import pandas as pd
+
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Input, Output
-from utils import get_infos
-from plotly import tools
-import plotly.plotly as py
-import plotly.graph_objs as go
-import socket
 import dash_table
-import pandas as pd
-import numpy as np
+import plotly.graph_objs as go
+import plotly.plotly as py
+from dash.dependencies import Input, Output
+from plotly import tools
+from utils import get_infos
 
 app = dash.Dash(__name__)
-table_columns = ['gpu', 'pid', 'used_gpu_mem', 'username', 'name', 'create_time', 'status', 'cpu_percent', 'cpu_num', 'memory_percent', 'num_threads', 'cmdline']
-int_columns = ['gpu', 'pid', 'cpu_num', 'num_threads']
-percent_columns = ['cpu_percent', 'memory_percent']
+
+table_columns = [
+    "gpu",
+    "pid",
+    "used_gpu_mem",
+    "username",
+    "name",
+    "create_time",
+    "status",
+    "cpu_percent",
+    "cpu_num",
+    "memory_percent",
+    "num_threads",
+    "cmdline",
+]
+int_columns = ["gpu", "pid", "cpu_num", "num_threads"]
+percent_columns = ["cpu_percent", "memory_percent"]
+mb_columns = ["used_gpu_mem"]
+
 
 def get_host_ip():
+    """Get host ip.
+    
+    Returns:
+        str: The obtained ip. UNKNOWN if failed.
+    """
+    ip = "UNKNOWN"
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect(("8.8.8.8", 80))
@@ -33,6 +56,15 @@ def timestamp2datetime(t):
 
 
 def convert_to_df(info):
+    """Convert gpu infomations to pd.DataFrame for filling table.
+    
+    Args:
+        info (dict): The dict returned by get_infos().
+    
+    Returns:
+        pd.DataFrame: The converted dataframe. The order of the columns is in the order of table_columns.
+    """
+
     device_info = info["info"]
     result = []
     for d in device_info:
@@ -47,24 +79,24 @@ def convert_to_df(info):
     for c in int_columns:
         result[c] = result[c].astype(int)
     for c in percent_columns:
-        result[c] = np.round(result[c]*100, 2)
+        result[c] = np.round(result[c] * 100, 2)
+    for c in mb_columns:
+        result[c] = np.round(result[c] / (1024 ** 2), 2)
     return result
 
 
-
-
 ip = get_host_ip()
-# infos = get_infos()
-# result = convert_to_df(infos)
 
 app.title = f"{ip} Server"
 app.layout = html.Div(
     html.Div(
         [
-            html.H1(children=f"{ip} 的 GPU 使用情况"),
-            html.Div(id="live-time-text"),
-            dcc.Interval(id="interval-component", interval=3 * 1000, n_intervals=0),
+            html.H1(children=f"{ip} Server GPU Usage"),
+            html.Div([html.Span("Update time："), html.Span(id="live-time-text")]),
+            dcc.Interval(id="interval-component", interval=5 * 1000, n_intervals=0),
+            html.H2(children="How are the GPUs"),
             dcc.Graph(id="gpu-graph"),
+            html.H2(children="Who is using GPUs"),
             dash_table.DataTable(
                 id="table",
                 columns=[{"name": i, "id": i} for i in table_columns],
@@ -75,10 +107,16 @@ app.layout = html.Div(
                     }
                 ],
                 style_data={"whiteSpace": "normal"},
-                # style_cell={"width": "200px"},
-                # style_cell_conditional=[
-                #     {"if": {'column_id': 'cmdline'}, "width": "50%"}
-                # ]
+                # n_fixed_rows=1, # don't use this for now
+                style_cell={"padding": "10px"},
+                style_cell_conditional=[
+                    {
+                        "if": {"row_index": "odd"},
+                        "backgroundColor": "rgb(248, 248, 248)",
+                    },
+                    {"if": {"column_id": "cmdline"}, "textAlign": "left"},
+                ],
+                style_header={"backgroundColor": "white", "fontWeight": "bold"},
             ),
         ]
     )
@@ -94,28 +132,33 @@ def update_graph(n):
     fig = tools.make_subplots(
         rows=2,
         cols=2,
-        subplot_titles=("显存剩余情况", "显存使用情况", "显卡温度情况", "风扇转速情况"),
-        shared_xaxes=True,
+        subplot_titles=(
+            "Memory Utilization",
+            "Free Memory (MB)",
+            "Temperature",
+            "Fan Speed",
+        ),
+        shared_xaxes=False,
     )
-    x = [d.id for d in device_info]
+    x = [f"{d.name} {d.id}" for d in device_info]
     free = [d.free / (1024.0 ** 2) for d in device_info]
     used = [d.used / (1024.0 ** 2) for d in device_info]
     total = [d.total / (1024.0 ** 2) for d in device_info]
-    free_ratio = [100 * f / t for f, t in zip(free, total)]
+    used_ratio = [100 * u / t for u, t in zip(used, total)]
     temp = [d.temperature for d in device_info]
     speed = [d.fan_speed for d in device_info]
-    hover_text = [f"free_ratio={f:.2f}" for f in free_ratio]
+    hover_text = [f"used={u:.0f}<br>total={t:.0f}" for u, t in zip(used, total)]
 
-    trace_free = go.Bar(x=x, y=free, text=hover_text, name="free")
-    trace_used = go.Bar(x=x, y=used, name="used")
+    trace_used_ratio = go.Bar(x=x, y=used_ratio, text=hover_text, name="used ratio")
+    trace_free = go.Bar(x=x, y=free, name="free")
     trace_temp = go.Bar(x=x, y=temp, name="temperature")
     trace_speed = go.Bar(x=x, y=speed, name="fan speed")
 
-    fig.append_trace(trace_free, 1, 1)
-    fig.append_trace(trace_used, 1, 2)
+    fig.append_trace(trace_used_ratio, 1, 1)
+    fig.append_trace(trace_free, 1, 2)
     fig.append_trace(trace_temp, 2, 1)
     fig.append_trace(trace_speed, 2, 2)
-    fig["layout"].update(title="GPU 实时监控")
+    fig["layout"].update(yaxis=dict(range=[0, 100]))
     return fig
 
 
@@ -123,7 +166,7 @@ def update_graph(n):
     Output("live-time-text", "children"), [Input("interval-component", "n_intervals")]
 )
 def update_time(n):
-    return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    return pd.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
 @app.callback(Output("table", "data"), [Input("interval-component", "n_intervals")])

@@ -1,7 +1,8 @@
-import pynvml
 from collections import namedtuple
 from pprint import pprint
+
 import psutil
+import pynvml
 
 
 def get_infos():
@@ -34,6 +35,7 @@ def get_infos():
         "Device",
         [
             "id",
+            "name",
             "free",
             "used",
             "total",
@@ -57,7 +59,7 @@ def get_infos():
             "name",
             "cmdline",
             "used_gpu_mem",
-            "create_time"
+            "create_time",
         ],
     )
     pynvml.nvmlInit()
@@ -66,6 +68,7 @@ def get_infos():
     info = []
     for i in range(device_count):
         handle = pynvml.nvmlDeviceGetHandleByIndex(i)
+        name = pynvml.nvmlDeviceGetName(handle).decode()
         mem_info = pynvml.nvmlDeviceGetMemoryInfo(handle)
         power_usage = pynvml.nvmlDeviceGetPowerUsage(handle)  # 电源使用量，单位为毫瓦 mW
         processes = pynvml.nvmlDeviceGetComputeRunningProcesses(handle)  # 哪些进程在使用该 GPU
@@ -88,7 +91,7 @@ def get_infos():
                     name=p.name(),
                     cmdline=" ".join(p.cmdline()),
                     used_gpu_mem=used_gpu_mem,
-                    create_time=p.create_time()
+                    create_time=p.create_time(),
                 )
             )
         try:
@@ -103,6 +106,7 @@ def get_infos():
         info.append(
             Device(
                 id=i,
+                name=name,
                 free=mem_info.free,
                 used=mem_info.used,
                 total=mem_info.total,
