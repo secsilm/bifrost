@@ -1,3 +1,6 @@
+'''Function to get GPU infomations.
+'''
+
 from collections import namedtuple
 from pprint import pprint
 import time
@@ -8,7 +11,13 @@ import pynvml
 pynvml.nvmlInit()
 
 def get_infos():
-    """获取所有显卡的信息。
+    """Get all information about all your graphics cards.
+
+    Returns:
+        dict: The returned result is a dict with 3 keys: count, driver_version and devices:
+            count: number of gpus found
+            driver_version: the version of the system’s graphics driver
+            devices: it's a list and every item is a namedtuple Device which has 10 fields, for exzample id, name and fan_speed etc. It should be noted that the Process field is also a namedtuple which has 11 fields.
     """
 
     infos = {}
@@ -45,13 +54,13 @@ def get_infos():
     )
     driver_version = pynvml.nvmlSystemGetDriverVersion().decode()
     device_count = pynvml.nvmlDeviceGetCount()
-    info = []
+    devices = []
     for i in range(device_count):
         handle = pynvml.nvmlDeviceGetHandleByIndex(i)
         name = pynvml.nvmlDeviceGetName(handle).decode()
         mem_info = pynvml.nvmlDeviceGetMemoryInfo(handle)
-        power_usage = pynvml.nvmlDeviceGetPowerUsage(handle)  # 电源使用量，单位为毫瓦 mW
-        processes = pynvml.nvmlDeviceGetComputeRunningProcesses(handle)  # 哪些进程在使用该 GPU
+        power_usage = pynvml.nvmlDeviceGetPowerUsage(handle)  # Power usage in milliwatts mW
+        processes = pynvml.nvmlDeviceGetComputeRunningProcesses(handle)  # Which processes are using the GPU
         # process_info = [(item.pid, item.usedGpuMemory) for item in process_info]
         process_info = []
         for p in processes:
@@ -85,7 +94,7 @@ def get_infos():
         temperature = pynvml.nvmlDeviceGetTemperature(
             handle, pynvml.NVML_TEMPERATURE_GPU
         )
-        info.append(
+        devices.append(
             Device(
                 id=i,
                 name=name,
@@ -102,7 +111,7 @@ def get_infos():
 
     infos["count"] = device_count
     infos["driver_version"] = driver_version
-    infos["info"] = info
+    infos["devices"] = devices
     return infos
 
 

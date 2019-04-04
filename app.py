@@ -65,7 +65,7 @@ def convert_to_df(info):
         pd.DataFrame: The converted dataframe. The order of the columns is in the order of table_columns.
     """
 
-    device_info = info["info"]
+    device_info = info["devices"]
     result = []
     for d in device_info:
         processes = d.process
@@ -129,7 +129,7 @@ app.layout = html.Div(
 )
 def update_graph(n):
     infos = get_infos()
-    device_info = infos["info"]
+    device_info = infos["devices"]
     fig = tools.make_subplots(
         rows=2,
         cols=2,
@@ -186,4 +186,4 @@ def update_table(n):
 
 
 if __name__ == "__main__":
-    app.run_server(host="0.0.0.0", port=8590, debug=False)
+    app.run_server(host="0.0.0.0", port=8150, debug=False)
