@@ -1,33 +1,14 @@
 from collections import namedtuple
 from pprint import pprint
+import time
 
 import psutil
 import pynvml
 
+pynvml.nvmlInit()
 
 def get_infos():
     """获取所有显卡的信息。
-
-    {
-        "count": 8,
-        "driver_version": '419.17',
-        "info": [
-            {
-                "0": 
-                    {
-                    "free": 1,
-                    "used": 2,
-                    "total": 3,
-                    "temp": 36,
-                    "fan_speed": 23,
-                    "power_status": 8
-                    }
-            }
-        ]
-    }
-
-
-    进程信息：pid、memory_percent、status、username、num_threads、cpu_num（该进程在哪个cpu上）、cpu_percent（该进程使用了多少cpu）、name、cmdline
     """
 
     infos = {}
@@ -62,7 +43,6 @@ def get_infos():
             "create_time",
         ],
     )
-    pynvml.nvmlInit()
     driver_version = pynvml.nvmlSystemGetDriverVersion().decode()
     device_count = pynvml.nvmlDeviceGetCount()
     info = []
@@ -79,6 +59,8 @@ def get_infos():
             pid = p.pid
             used_gpu_mem = p.usedGpuMemory
             p = psutil.Process(pid=pid)
+            _ = p.cpu_percent()
+            time.sleep(0.05)
             process_info.append(
                 Process(
                     pid=pid,
@@ -87,7 +69,7 @@ def get_infos():
                     username=p.username(),
                     num_threads=p.num_threads(),
                     cpu_num=p.cpu_num(),
-                    cpu_percent=p.cpu_percent(interval=1),
+                    cpu_percent=p.cpu_percent(),
                     name=p.name(),
                     cmdline=" ".join(p.cmdline()),
                     used_gpu_mem=used_gpu_mem,
