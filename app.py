@@ -89,14 +89,14 @@ ip = get_host_ip()
 
 app.title = f"{ip} Server"
 app.layout = html.Div(
-    html.Div(
-        [
-            html.H1(children=f"{ip} Server GPU Usage"),
-            html.Div([html.Span("Update time："), html.Span(id="live-time-text")]),
-            dcc.Interval(id="interval-component", interval=10 * 1000, n_intervals=0),
-            html.H2(children="How are the GPUs"),
-            dcc.Graph(id="gpu-graph"),
-            html.H2(children="Who is using GPUs"),
+    [
+        html.H1(children=f"{ip} Server GPU Usage", style={"margin-left": "20px"}),
+        html.Div([html.Span("Update time：", style={"margin-left": "20px"}), html.Span(id="live-time-text")]),
+        dcc.Interval(id="interval-component", interval=10 * 1000, n_intervals=0),
+        html.H2(children="How are the GPUs", style={"margin-left": "20px"}),
+        dcc.Graph(id="gpu-graph"),
+        html.H2(children="Who is using GPUs", style={"margin-left": "20px"}),
+        html.Div(
             dash_table.DataTable(
                 id="table",
                 columns=[{"name": i, "id": i} for i in table_columns],
@@ -118,8 +118,9 @@ app.layout = html.Div(
                 ],
                 style_header={"backgroundColor": "white", "fontWeight": "bold"},
             ),
-        ]
-    )
+            style={"margin-left": "60px"},
+        ),
+    ]
 )
 
 
@@ -139,6 +140,7 @@ def update_graph(n):
             "Fan Speed",
         ),
         shared_xaxes=False,
+        print_grid=False
     )
     x = [f"{d.name} {d.id}" for d in device_info]
     free = [d.free / (1024.0 ** 2) for d in device_info]
@@ -158,7 +160,14 @@ def update_graph(n):
     fig.append_trace(trace_free, 1, 2)
     fig.append_trace(trace_temp, 2, 1)
     fig.append_trace(trace_speed, 2, 2)
-    fig["layout"].update(yaxis=dict(range=[0, 100]))
+    margin=go.layout.Margin(
+        l=100,
+        r=100,
+        b=50,
+        t=25,
+        pad=4
+    )
+    fig["layout"].update(yaxis=dict(range=[0, 100]), margin=margin)
     return fig
 
 
