@@ -1,5 +1,7 @@
 # Bifrost: A Simple GPU Monitor
 
+[简体中文](./README_zh.md)
+
 A simple [dash](https://github.com/plotly/dash/)-based GPU monitor that uses web pages to continuously view GPU usage.
 
 ![exzample](screenshots/exzample.png)
