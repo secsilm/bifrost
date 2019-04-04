@@ -1,15 +1,17 @@
-# GPU 监视器
+# Bifrost: A Simple GPU Monitor
 
-使用网页持续查看 GPU 使用情况。
+A simple [dash](https://github.com/plotly/dash/)-based GPU monitor that uses web pages to continuously view GPU usage.
 
 ![exzample](screenshots/exzample.png)
 
-## 特性
+## Features
 
-- 使用网页持续查看 GPU 的基本使用情况，包括 GPU 使用率、剩余显存、温度和风扇转速
-- 查看是谁在使用 GPU，包括使用者、进程 ID、进程创建时间和进程创建命令等 12 项信息
+- Use the webpage to continuously view basic GPU usage, including GPU usage, remaining graphics memory, temperature, and fan speed
+- Check who is using the GPU, including user, process ID, process creation time, process creation commands, etc. For details, see the description below.
 
-## 依赖
+## Dependencies
+
+Bifrost relies mainly on the following:
 
 - Python 3.6+
 - dash
@@ -18,22 +20,41 @@
 - numpy
 - nvidia-ml-py3
 
-你可以通过下面的命令来安装这些依赖：
+You can install these dependencies with the following command:
 
 ```bash
 pip install dash psutil pandas numpy nvidia-ml-py3
 ```
 
-## 使用
+You can also use `requirements.txt` to install them:
+
+```bash
+pip install -r requirements.txt
+```
+
+## Usage
 
 ```bash
 python app.py
 ```
 
-## 实现步骤
+Then open http://locahost:8150 or http://{*your_ip*}:8150 in your browser. Bazinga!
 
-初步想法，主要依赖 [pynvml](https://pypi.org/project/nvidia-ml-py3/) 来获取 GPU 信息，使用 dash 显示网页。
+## Field description
 
-1. 使用 pynvml 获取 GPU 信息（已用、剩余和总共等信息）
-2. 使用 psutil 获取进程信息
-3. 前端使用 dash 来展示
+- `gpu`: GPU ID
+- `pid`: The process ID
+- `used_gpu_mem`: The GPU memory used by the process
+- `username`: The owner of the process
+- `name`: The Process name
+- `create_time`: The process creation time
+- `status`: The process status
+- `cpu_percent`: CPU utilization of the process
+- `cpu_num`: Which CPU this process is currently running on
+- `memory_percent`: Memory utilization of the process
+- `num_threads`: The number of threads currently used by this process
+- `cmdline`: The command line this process has been called
+
+## LICENSE
+
+MIT.
