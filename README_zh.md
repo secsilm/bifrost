@@ -2,7 +2,7 @@
 
 一个简单的基于 [dash](https://github.com/plotly/dash/) 的 GPU 监视器，使用网页持续查看 GPU 使用情况。
 
-![exzample](screenshots/exzample.png)
+![example](screenshots/example.png)
 
 ## 特性
 
