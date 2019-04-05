@@ -151,10 +151,10 @@ def update_graph(n):
     speed = [d.fan_speed for d in device_info]
     hover_text = [f"used={u:.0f}<br>total={t:.0f}" for u, t in zip(used, total)]
 
-    trace_used_ratio = go.Bar(x=x, y=used_ratio, text=hover_text, name="used ratio")
-    trace_free = go.Bar(x=x, y=free, name="free")
-    trace_temp = go.Bar(x=x, y=temp, name="temperature")
-    trace_speed = go.Bar(x=x, y=speed, name="fan speed")
+    trace_used_ratio = go.Bar(x=x, y=used_ratio, text=hover_text, marker=dict(color='#fa86be'), name="used ratio")
+    trace_free = go.Bar(x=x, y=free, marker=dict(color='#a275e3'), name="free")
+    trace_temp = go.Bar(x=x, y=temp, marker=dict(color='#9aebed'), name="temperature")
+    trace_speed = go.Bar(x=x, y=speed, marker=dict(color='#fffcab'), name="fan speed")
 
     fig.append_trace(trace_used_ratio, 1, 1)
     fig.append_trace(trace_free, 1, 2)
