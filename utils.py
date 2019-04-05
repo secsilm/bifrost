@@ -1,23 +1,26 @@
-'''Function to get GPU infomations.
-'''
+"""Function to get GPU infomations.
+"""
 
+import time
 from collections import namedtuple
 from pprint import pprint
-import time
 
 import psutil
+
 import pynvml
 
 pynvml.nvmlInit()
+
 
 def get_infos():
     """Get all information about all your graphics cards.
 
     Returns:
         dict: The returned result is a dict with 3 keys: count, driver_version and devices:
-            count: number of gpus found
-            driver_version: the version of the system’s graphics driver
-            devices: it's a list and every item is a namedtuple Device which has 10 fields, for exzample id, name and fan_speed etc. It should be noted that the Process field is also a namedtuple which has 11 fields.
+            count: Number of gpus found
+            driver_version: The version of the system’s graphics driver
+            devices: It's a list and every item is a namedtuple Device which has 10 fields, for exzample id, name and fan_speed etc. 
+                     It should be noted that the Process field is also a namedtuple which has 11 fields.
     """
 
     infos = {}
@@ -59,8 +62,12 @@ def get_infos():
         handle = pynvml.nvmlDeviceGetHandleByIndex(i)
         name = pynvml.nvmlDeviceGetName(handle).decode()
         mem_info = pynvml.nvmlDeviceGetMemoryInfo(handle)
-        power_usage = pynvml.nvmlDeviceGetPowerUsage(handle)  # Power usage in milliwatts mW
-        processes = pynvml.nvmlDeviceGetComputeRunningProcesses(handle)  # Which processes are using the GPU
+        power_usage = pynvml.nvmlDeviceGetPowerUsage(
+            handle
+        )  # Power usage in milliwatts mW
+        processes = pynvml.nvmlDeviceGetComputeRunningProcesses(
+            handle
+        )  # Which processes are using the GPU
         # process_info = [(item.pid, item.usedGpuMemory) for item in process_info]
         process_info = []
         for p in processes:
