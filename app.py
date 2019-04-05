@@ -32,7 +32,7 @@ table_columns = [
 int_columns = ["gpu", "pid", "cpu_num", "num_threads"]
 percent_columns = ["cpu_percent", "memory_percent"]
 mb_columns = ["used_gpu_mem"]
-bar_colors = ['#33425b', '#5baaec', '#526ed0', '#484cb0']
+bar_colors = ["#33425b", "#5baaec", "#526ed0", "#484cb0"]
 
 
 def get_host_ip():
@@ -92,7 +92,12 @@ app.title = f"{ip} Server"
 app.layout = html.Div(
     [
         html.H1(children=f"{ip} Server GPU Usage", style={"margin-left": "20px"}),
-        html.Div([html.Span("Update time：", style={"margin-left": "20px"}), html.Span(id="live-time-text")]),
+        html.Div(
+            [
+                html.Span("Update time：", style={"margin-left": "20px"}),
+                html.Span(id="live-time-text"),
+            ]
+        ),
         dcc.Interval(id="interval-component", interval=10 * 1000, n_intervals=0),
         html.H2(children="How are the GPUs", style={"margin-left": "20px"}),
         dcc.Graph(id="gpu-graph"),
@@ -141,7 +146,7 @@ def update_graph(n):
             "Fan Speed",
         ),
         shared_xaxes=False,
-        print_grid=False
+        print_grid=False,
     )
     x = [f"{d.name} {d.id}" for d in device_info]
     free = [d.free / (1024.0 ** 2) for d in device_info]
@@ -152,22 +157,26 @@ def update_graph(n):
     speed = [d.fan_speed for d in device_info]
     hover_text = [f"used={u:.0f}<br>total={t:.0f}" for u, t in zip(used, total)]
 
-    trace_used_ratio = go.Bar(x=x, y=used_ratio, text=hover_text, marker=dict(color=bar_colors[0]), name="used ratio")
+    trace_used_ratio = go.Bar(
+        x=x,
+        y=used_ratio,
+        text=hover_text,
+        marker=dict(color=bar_colors[0]),
+        name="used ratio",
+    )
     trace_free = go.Bar(x=x, y=free, marker=dict(color=bar_colors[1]), name="free")
-    trace_temp = go.Bar(x=x, y=temp, marker=dict(color=bar_colors[2]), name="temperature")
-    trace_speed = go.Bar(x=x, y=speed, marker=dict(color=bar_colors[3]), name="fan speed")
+    trace_temp = go.Bar(
+        x=x, y=temp, marker=dict(color=bar_colors[2]), name="temperature"
+    )
+    trace_speed = go.Bar(
+        x=x, y=speed, marker=dict(color=bar_colors[3]), name="fan speed"
+    )
 
     fig.append_trace(trace_used_ratio, 1, 1)
     fig.append_trace(trace_free, 1, 2)
     fig.append_trace(trace_temp, 2, 1)
     fig.append_trace(trace_speed, 2, 2)
-    margin=go.layout.Margin(
-        l=100,
-        r=100,
-        b=50,
-        t=25,
-        pad=4
-    )
+    margin = go.layout.Margin(l=100, r=100, b=50, t=25, pad=4)
     fig["layout"].update(yaxis=dict(range=[0, 100]), margin=margin, showlegend=False)
     return fig
 
