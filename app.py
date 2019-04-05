@@ -32,6 +32,7 @@ table_columns = [
 int_columns = ["gpu", "pid", "cpu_num", "num_threads"]
 percent_columns = ["cpu_percent", "memory_percent"]
 mb_columns = ["used_gpu_mem"]
+bar_colors = ['#33425b', '#5baaec', '#526ed0', '#484cb0']
 
 
 def get_host_ip():
@@ -151,10 +152,10 @@ def update_graph(n):
     speed = [d.fan_speed for d in device_info]
     hover_text = [f"used={u:.0f}<br>total={t:.0f}" for u, t in zip(used, total)]
 
-    trace_used_ratio = go.Bar(x=x, y=used_ratio, text=hover_text, marker=dict(color='#fa86be'), name="used ratio")
-    trace_free = go.Bar(x=x, y=free, marker=dict(color='#a275e3'), name="free")
-    trace_temp = go.Bar(x=x, y=temp, marker=dict(color='#9aebed'), name="temperature")
-    trace_speed = go.Bar(x=x, y=speed, marker=dict(color='#fffcab'), name="fan speed")
+    trace_used_ratio = go.Bar(x=x, y=used_ratio, text=hover_text, marker=dict(color=bar_colors[0]), name="used ratio")
+    trace_free = go.Bar(x=x, y=free, marker=dict(color=bar_colors[1]), name="free")
+    trace_temp = go.Bar(x=x, y=temp, marker=dict(color=bar_colors[2]), name="temperature")
+    trace_speed = go.Bar(x=x, y=speed, marker=dict(color=bar_colors[3]), name="fan speed")
 
     fig.append_trace(trace_used_ratio, 1, 1)
     fig.append_trace(trace_free, 1, 2)
@@ -167,7 +168,7 @@ def update_graph(n):
         t=25,
         pad=4
     )
-    fig["layout"].update(yaxis=dict(range=[0, 100]), margin=margin)
+    fig["layout"].update(yaxis=dict(range=[0, 100]), margin=margin, showlegend=False)
     return fig
 
 
