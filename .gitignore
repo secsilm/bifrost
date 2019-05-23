@@ -3,3 +3,5 @@ __pycache__/
 app.out
 .ipynb_checkpoints/
 run.pid
+log/
+config.py

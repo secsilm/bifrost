@@ -98,6 +98,7 @@ app.layout = html.Div(
                 html.Span(id="live-time-text"),
             ]
         ),
+        html.Div(html.Span(f"Driver version: {get_infos()['driver_version']}", style={"margin-left": "20px"})),
         dcc.Interval(id="interval-component", interval=10 * 1000, n_intervals=0),
         html.H2(children="How are the GPUs", style={"margin-left": "20px"}),
         dcc.Graph(id="gpu-graph"),
