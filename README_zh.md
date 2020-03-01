@@ -38,6 +38,12 @@ pip install -r requirements.txt
 python app.py
 ```
 
+也可以使用 gunicorn 启动：
+
+```bash
+gunicorn -c config.py app:server
+```
+
 然后在浏览器中打开 http://locahost:8150 或者 http://{*your_ip*}:8150。Bazinga！
 
 ## 字段说明

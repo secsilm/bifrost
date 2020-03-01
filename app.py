@@ -14,6 +14,7 @@ from plotly import tools
 from utils import get_infos
 
 app = dash.Dash(__name__)
+server = app.server
 
 table_columns = [
     "gpu",
@@ -75,7 +76,7 @@ def convert_to_df(info):
         df["gpu"] = dids
         result.append(df)
     result = pd.concat(result, sort=False)
-    result = result[table_columns]
+    result = result.loc[:, table_columns]
     result.create_time = result.create_time.map(timestamp2datetime)
     for c in int_columns:
         result[c] = result[c].astype(int)

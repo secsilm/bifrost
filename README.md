@@ -40,6 +40,12 @@ pip install -r requirements.txt
 python app.py
 ```
 
+or using gunicorn:
+
+```bash
+gunicorn -c config.py app:server
+```
+
 Then open http://locahost:8150 or http://{*your_ip*}:8150 in your browser. Bazinga!
 
 ## Field description
