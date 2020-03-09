@@ -1,1 +1,1 @@
-kill `cat run.pid`
+kill `cat gunicorn.pid`

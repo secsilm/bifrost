@@ -1,2 +1,2 @@
-source activate bifrost
-nohup python app.py > app.out & echo $! > run.pid
+# conda activate bifrost
+gunicorn -c config.py app:server

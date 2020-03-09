@@ -32,6 +32,7 @@ def get_infos():
             "free",
             "used",
             "total",
+            "gpu_util",
             "temperature",
             "fan_speed",
             "power_usage",
@@ -101,6 +102,8 @@ def get_infos():
         temperature = pynvml.nvmlDeviceGetTemperature(
             handle, pynvml.NVML_TEMPERATURE_GPU
         )
+        # Volatile Gpu-Util in output of nvidia-smi
+        gpu_util = pynvml.nvmlDeviceGetUtilizationRates(handle).gpu
         devices.append(
             Device(
                 id=i,
@@ -108,6 +111,7 @@ def get_infos():
                 free=mem_info.free,
                 used=mem_info.used,
                 total=mem_info.total,
+                gpu_util=gpu_util,
                 temperature=temperature,
                 fan_speed=fan_speed,
                 power_usage=power_usage,

@@ -142,10 +142,10 @@ def update_graph(n):
         rows=2,
         cols=2,
         subplot_titles=(
-            "Memory Utilization",
-            "Free Memory (MB)",
-            "Temperature",
-            "Fan Speed",
+            "GPU Util(%)",
+            "Memory Usage Rate(%)",
+            "Temperature(℃)",
+            "Fan Speed(%)",
         ),
         shared_xaxes=False,
         print_grid=False,
@@ -154,19 +154,25 @@ def update_graph(n):
     free = [d.free / (1024.0 ** 2) for d in device_info]
     used = [d.used / (1024.0 ** 2) for d in device_info]
     total = [d.total / (1024.0 ** 2) for d in device_info]
+    gpu_util = [d.gpu_util for d in device_info]
     used_ratio = [100 * u / t for u, t in zip(used, total)]
     temp = [d.temperature for d in device_info]
     speed = [d.fan_speed for d in device_info]
-    hover_text = [f"used={u:.0f}<br>total={t:.0f}" for u, t in zip(used, total)]
+    hover_text = [f"used={u:.0f} MB<br>total={t:.0f} MB" for u, t in zip(used, total)]
 
+    trace_gpu_util = go.Bar(
+        x=x,
+        y=gpu_util,
+        marker=dict(color=bar_colors[0]),
+        name="GPU Util",
+    )
     trace_used_ratio = go.Bar(
         x=x,
         y=used_ratio,
         text=hover_text,
-        marker=dict(color=bar_colors[0]),
+        marker=dict(color=bar_colors[1]),
         name="used ratio",
     )
-    trace_free = go.Bar(x=x, y=free, marker=dict(color=bar_colors[1]), name="free")
     trace_temp = go.Bar(
         x=x, y=temp, marker=dict(color=bar_colors[2]), name="temperature"
     )
@@ -174,12 +180,12 @@ def update_graph(n):
         x=x, y=speed, marker=dict(color=bar_colors[3]), name="fan speed"
     )
 
-    fig.append_trace(trace_used_ratio, 1, 1)
-    fig.append_trace(trace_free, 1, 2)
+    fig.append_trace(trace_gpu_util, 1, 1)
+    fig.append_trace(trace_used_ratio, 1, 2)
     fig.append_trace(trace_temp, 2, 1)
     fig.append_trace(trace_speed, 2, 2)
     margin = go.layout.Margin(l=100, r=100, b=50, t=25, pad=4)
-    fig["layout"].update(yaxis=dict(range=[0, 100]), margin=margin, showlegend=False)
+    fig["layout"].update(yaxis=dict(range=[0, 100]), yaxis2=dict(range=[0, 100]), margin=margin, showlegend=False)
     return fig
 
 
