@@ -3,4 +3,4 @@ __pycache__/
 app.out
 .ipynb_checkpoints/
 *.pid
-log/*
+*.log
