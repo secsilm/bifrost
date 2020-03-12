@@ -99,7 +99,12 @@ app.layout = html.Div(
                 html.Span(id="live-time-text"),
             ]
         ),
-        html.Div(html.Span(f"Driver version: {get_infos()['driver_version']}", style={"margin-left": "20px"})),
+        html.Div(
+            html.Span(
+                f"Driver version: {get_infos()['driver_version']}",
+                style={"margin-left": "20px"},
+            )
+        ),
         dcc.Interval(id="interval-component", interval=10 * 1000, n_intervals=0),
         html.H2(children="How are the GPUs", style={"margin-left": "20px"}),
         dcc.Graph(id="gpu-graph"),
@@ -161,10 +166,7 @@ def update_graph(n):
     hover_text = [f"used={u:.0f} MB<br>total={t:.0f} MB" for u, t in zip(used, total)]
 
     trace_gpu_util = go.Bar(
-        x=x,
-        y=gpu_util,
-        marker=dict(color=bar_colors[0]),
-        name="GPU Util",
+        x=x, y=gpu_util, marker=dict(color=bar_colors[0]), name="GPU Util"
     )
     trace_used_ratio = go.Bar(
         x=x,
@@ -185,7 +187,13 @@ def update_graph(n):
     fig.append_trace(trace_temp, 2, 1)
     fig.append_trace(trace_speed, 2, 2)
     margin = go.layout.Margin(l=100, r=100, b=50, t=25, pad=4)
-    fig["layout"].update(yaxis=dict(range=[0, 100]), yaxis2=dict(range=[0, 100]), margin=margin, showlegend=False)
+    fig["layout"].update(
+        yaxis=dict(range=[0, 100]),
+        yaxis2=dict(range=[0, 100]),
+        yaxis4=dict(range=[0, 100]),
+        margin=margin,
+        showlegend=False,
+    )
     return fig
 
 
