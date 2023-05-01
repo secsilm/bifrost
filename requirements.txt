@@ -8,7 +8,7 @@ dash-html-components==0.15.0
 dash-renderer==0.21.0
 dash-table==3.6.0
 decorator==4.4.0
-Flask==1.0.2
+Flask==2.3.2
 Flask-Compress==1.4.0
 gevent==1.4.0
 greenlet==0.4.15
